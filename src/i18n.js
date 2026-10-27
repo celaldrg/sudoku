@@ -14,7 +14,7 @@ export const STRINGS = Object.freeze({
   en: Object.freeze({
     newGame: 'New game',
     restart: 'Restart',
-    switchLanguage: 'Switch to Turkish',
+    switchLanguage: 'TR – switch to Turkish',
     difficulty: 'Difficulty',
     easy: 'Easy',
     medium: 'Medium',
@@ -55,7 +55,7 @@ export const STRINGS = Object.freeze({
   tr: Object.freeze({
     newGame: 'Yeni oyun',
     restart: 'Yeniden başla',
-    switchLanguage: 'İngilizceye geç',
+    switchLanguage: 'EN – İngilizceye geç',
     difficulty: 'Zorluk',
     easy: 'Kolay',
     medium: 'Orta',
