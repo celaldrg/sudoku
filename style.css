@@ -353,7 +353,7 @@ select:hover {
   grid-template-rows: repeat(3, 1fr);
   place-items: center;
   color: var(--muted);
-  font-size: calc(var(--board) * 0.025);
+  font-size: calc(var(--board) * 0.03);
   font-weight: 650;
   pointer-events: none;
 }
@@ -530,7 +530,11 @@ select:hover {
   text-align: center;
 }
 
+/* A 40px-tall tap target; the negative margins keep the footer's height unchanged. */
 .footer a {
+  display: inline-block;
+  padding: 11px 6px;
+  margin: -11px -6px;
   color: var(--accent-2);
   text-decoration: none;
 }

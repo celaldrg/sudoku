@@ -1,8 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { candidateMask, emptyGrid, parseGrid, popcount } from '../src/board.js';
+import { candidateMask, emptyGrid, popcount } from '../src/board.js';
 import { generatePuzzle } from '../src/generator.js';
 import { findHint } from '../src/hint.js';
+import { parseGrid } from '../test-support/grid.js';
 
 // A classic easy puzzle and its solution.
 const EASY = '53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79';

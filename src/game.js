@@ -4,11 +4,11 @@
  * changes), so the UI can do `state = action(state, ...)` and re-render.
  * The state is plain JSON data, ready to be saved and restored.
  */
-import { ALL_DIGITS_MASK, CELL_COUNT, candidateMask, colOf, indexOf, peersOf, popcount, rowOf } from './board.js';
+import { ALL_DIGITS_MASK, CELL_COUNT, candidateMask, colOf, indexOf, maskToDigits, peersOf, rowOf } from './board.js';
 import { DIFFICULTIES, generatePuzzle } from './generator.js';
 import { findHint } from './hint.js';
 import { createRng, randomSeed, shuffle } from './rng.js';
-import { findConflicts, findMistakes, isComplete, isSolved } from './validate.js';
+import { findMistakes, isComplete, isSolved } from './validate.js';
 
 /** Hints available in every new game. */
 export const HINTS_PER_GAME = 3;
@@ -222,15 +222,6 @@ export function tick(state, dtMs) {
 }
 
 /**
- * Cells breaking a Sudoku rule in the current entries.
- * @param {GameState} state
- * @returns {number[]} Sorted cell indices.
- */
-export function getConflicts(state) {
-  return findConflicts(state.values);
-}
-
-/**
  * How many of each digit are still missing from the board (never below 0).
  * @param {GameState} state
  * @returns {number[]} Array of length 10; index d holds the count for digit d (index 0 unused).
@@ -314,6 +305,7 @@ export function restoreGame(data) {
 /**
  * Deterministic mid-game state for the ?demo screenshot: a medium puzzle about
  * half filled in correctly, a few cells with pencil marks and a selected cell.
+ * It is built from real moves, so its undo history is genuine.
  * @returns {GameState}
  */
 export function createDemoGame() {
@@ -322,23 +314,19 @@ export function createDemoGame() {
   const open = shuffle(cellsWhere(base.puzzle, (v) => v === 0), rng);
   const fillCount = Math.floor(open.length * DEMO_FILL_RATIO);
   const filled = open.slice(0, fillCount);
-  const values = base.puzzle.slice();
-  for (const i of filled) values[i] = base.solution[i];
-  const notes = new Array(CELL_COUNT).fill(0);
+  let state = base;
+  for (const i of filled) state = setValue(state, i, base.solution[i]);
   let noted = 0;
   for (const i of open.slice(fillCount)) {
     if (noted >= DEMO_NOTE_CELLS) break;
-    const mask = candidateMask(values, i);
-    const count = popcount(mask);
-    if (count >= 2 && count <= 4) {
-      notes[i] = mask;
+    const digits = maskToDigits(candidateMask(state.values, i));
+    if (digits.length >= 2 && digits.length <= 4) {
+      for (const digit of digits) state = toggleNote(state, i, digit);
       noted++;
     }
   }
   return {
-    ...base,
-    values,
-    notes,
+    ...state,
     selected: closestToCenter(filled),
     hintsLeft: HINTS_PER_GAME - 1,
     elapsedMs: DEMO_ELAPSED_MS,

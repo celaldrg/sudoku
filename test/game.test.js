@@ -10,7 +10,6 @@ import {
   createGame,
   erase,
   formatTime,
-  getConflicts,
   getRemainingCounts,
   inputDigit,
   moveSelection,
@@ -26,6 +25,7 @@ import {
   useHint,
 } from '../src/game.js';
 import { countSolutions } from '../src/solver.js';
+import { findConflicts } from '../src/validate.js';
 
 const BASE = createGame({ difficulty: 'easy', seed: 11 });
 const firstEmpty = (state) => state.puzzle.indexOf(0);
@@ -150,8 +150,8 @@ test('conflicts and remaining counts reflect the board', () => {
   const i = firstEmpty(BASE);
   const clash = peersOf(i).map((p) => BASE.puzzle[p]).find((v) => v !== 0);
   const s = setValue(BASE, i, clash);
-  assert.ok(getConflicts(s).includes(i));
-  assert.deepEqual(getConflicts(BASE), []);
+  assert.ok(findConflicts(s.values).includes(i));
+  assert.deepEqual(findConflicts(BASE.values), []);
 
   const remaining = getRemainingCounts(BASE);
   const empties = BASE.puzzle.filter((v) => v === 0).length;
@@ -247,7 +247,7 @@ test('the demo state is a deterministic, good-looking medium mid-game', () => {
   assert.equal(demo.difficulty, 'medium');
   assert.equal(demo.seed, DEMO_SEED);
   assert.equal(demo.status, 'playing');
-  assert.deepEqual(getConflicts(demo), []);
+  assert.deepEqual(findConflicts(demo.values), []);
   assert.ok(demo.values.every((v, i) => v === 0 || v === demo.solution[i]), 'entries are correct');
   const filled = demo.values.filter((v) => v !== 0).length;
   assert.ok(filled > 45 && filled < 70, `filled cells: ${filled}`);
@@ -260,4 +260,12 @@ test('the demo state is a deterministic, good-looking medium mid-game', () => {
   assert.ok(demo.selected >= 0);
   assert.equal(demo.puzzle[demo.selected], 0, 'selected cell is a player entry');
   assert.notEqual(demo.values[demo.selected], 0);
+});
+
+test('the demo has a genuine undo history back to the bare puzzle', () => {
+  let s = createDemoGame();
+  assert.ok(canUndo(s), 'Undo is available in the demo');
+  while (canUndo(s)) s = undo(s);
+  assert.deepEqual(s.values, s.puzzle);
+  assert.deepEqual(s.notes, new Array(81).fill(0));
 });

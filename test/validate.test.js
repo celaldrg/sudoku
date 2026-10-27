@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { emptyGrid, indexOf, parseGrid } from '../src/board.js';
+import { emptyGrid, indexOf } from '../src/board.js';
 import { findConflicts, findMistakes, isComplete, isSolved } from '../src/validate.js';
+import { parseGrid } from '../test-support/grid.js';
 
 // A classic easy puzzle and its solution.
 const EASY = '53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79';

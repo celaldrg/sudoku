@@ -40,11 +40,13 @@ test('different seeds give different puzzles', () => {
   assert.notDeepEqual(a.puzzle, b.puzzle);
 });
 
-test('defaults to a unique medium puzzle with a random seed', () => {
+test('defaults to a unique medium puzzle with a random seed', (t) => {
+  t.mock.method(Math, 'random', () => 0.25); // stubbed, so the "random" seed is fixed
   const result = generatePuzzle();
   assert.equal(result.difficulty, 'medium');
-  assert.ok(Number.isInteger(result.seed));
+  assert.equal(result.seed, 2 ** 30);
   assert.equal(countSolutions(result.puzzle), 1);
+  assert.deepEqual(result, generatePuzzle({ difficulty: 'medium', seed: 2 ** 30 }));
 });
 
 test('rejects unknown difficulties', () => {

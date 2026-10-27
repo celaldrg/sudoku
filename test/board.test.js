@@ -5,15 +5,14 @@ import {
   candidateMask,
   colOf,
   emptyGrid,
-  formatGrid,
   indexOf,
   maskToDigits,
-  parseGrid,
   peersOf,
   popcount,
   rowOf,
   units,
 } from '../src/board.js';
+import { parseGrid } from '../test-support/grid.js';
 
 // A classic easy puzzle.
 const EASY = '53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79';
@@ -36,20 +35,6 @@ test('there are 27 units of 9 cells and every cell has 20 peers', () => {
     assert.equal(peers.length, 20);
     assert.ok(!peers.includes(i));
   }
-});
-
-test('parseGrid and formatGrid round-trip', () => {
-  const grid = parseGrid(EASY);
-  assert.equal(grid.length, 81);
-  assert.equal(grid[0], 5);
-  assert.equal(grid[2], 0);
-  assert.equal(formatGrid(grid), EASY);
-  assert.deepEqual(parseGrid(EASY.replaceAll('.', '0')), grid);
-});
-
-test('parseGrid rejects malformed input', () => {
-  assert.throws(() => parseGrid('123'));
-  assert.throws(() => parseGrid('x'.repeat(81)));
 });
 
 test('bitmask helpers', () => {

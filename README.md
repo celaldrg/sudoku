@@ -83,6 +83,7 @@ src/
   dialogs.js        <dialog> helpers
   main.js           entry point: events, timer, saving
 test/               node:test suites
+test-support/       grid fixtures shared by the tests
 docs/screenshot.png
 ```
 

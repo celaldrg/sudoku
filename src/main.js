@@ -168,11 +168,6 @@ function toggleNotes(announce) {
   if (announce) toast(state.notesMode ? 'toastNotesOn' : 'toastNotesOff');
 }
 
-function giveHint() {
-  if (state.hintsLeft <= 0) toast('toastNoHints');
-  else update(useHint(state));
-}
-
 function checkMistakes() {
   const next = checkBoard(state);
   update(next);
@@ -258,7 +253,7 @@ function wireEvents() {
   ui.undo.addEventListener('click', () => update(undo(state)));
   ui.erase.addEventListener('click', eraseSelected);
   ui.notes.addEventListener('click', () => toggleNotes(false));
-  ui.hint.addEventListener('click', giveHint);
+  ui.hint.addEventListener('click', () => update(useHint(state)));
   ui.check.addEventListener('click', checkMistakes);
   ui.newGame.addEventListener('click', () => startNewGame(ui.difficulty.value));
   ui.restart.addEventListener('click', restart);

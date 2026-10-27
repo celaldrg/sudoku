@@ -33,7 +33,10 @@ test('shuffle is a deterministic permutation', () => {
   assert.notDeepEqual(once, items);
 });
 
-test('randomSeed returns an unsigned 32-bit integer', () => {
-  const seed = randomSeed();
-  assert.ok(Number.isInteger(seed) && seed >= 0 && seed < 2 ** 32);
+test('randomSeed maps Math.random onto the unsigned 32-bit range', (t) => {
+  const draws = [0, 0.5, 1 - 2 ** -53]; // lowest, middle and highest possible Math.random values
+  t.mock.method(Math, 'random', () => draws.shift());
+  assert.equal(randomSeed(), 0);
+  assert.equal(randomSeed(), 2 ** 31);
+  assert.equal(randomSeed(), 2 ** 32 - 1);
 });
